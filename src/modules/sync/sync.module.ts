@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { Module } from '@nestjs/common/decorators';
 import { AxiosModule } from 'src/providers/axios/axios.module';
 import { ExternalGraphModule } from 'src/providers/external-graph/external-graph.module';
@@ -7,7 +8,7 @@ import { SyncService } from './sync.service';
 
 @Module({
   imports: [AxiosModule, ExternalGraphModule, PairModule],
-  providers: [SyncService],
+  providers: [SyncService, Logger],
   controllers: [SyncController],
 })
 export class SyncModule {}

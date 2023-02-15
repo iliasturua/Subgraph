@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { AxiosService } from 'src/providers/axios/axios.service';
 import { ExternalGraphService } from 'src/providers/external-graph/external-graph.service';
 import { PairRepo } from '../pair/pair.repo';
@@ -13,8 +14,10 @@ export class SyncService {
     private axios: AxiosService,
     private externalGraphService: ExternalGraphService,
     private pairRepo: PairRepo,
+    private readonly logger: Logger,
   ) {}
 
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async synchronizePairs(): Promise<SynchronizedPairs> {
     const url = this.externalGraphService.getUrl();
     const query = this.externalGraphService.getQuery();
@@ -37,6 +40,8 @@ export class SyncService {
       if (pairsToDelete.length) {
         await this.pairRepo.deleteMany(pairsToDelete);
       }
+
+      this.logger.log({ inserted: pairsToInsert, deleted: pairsToDelete });
 
       return { inserted: pairsToInsert, deleted: pairsToDelete };
     } catch (error) {
