@@ -12,8 +12,6 @@ export class AxiosService {
     data: any,
     config?: AxiosRequestConfig,
   ): Promise<T> {
-    console.log(data);
-
     const response = await firstValueFrom(
       this.httpService.post<T>(url, data, config),
     );
